@@ -83,9 +83,9 @@ def teeth_seperation_method1(color_image):
 
             image_patch = sub_image(color_image, (cX, cY), angle + 90, height, width)
             showimage('A1_original_img_' + str(num), image_patch)
-            blue_img = image_patch[:,:,0]
+            # blue_img = image_patch[:,:,0]
             # showimage("processed_img" + str(num), blue_img)
-            dent_detection(blue_img, num, angle)
+            # dent_detection(blue_img, num, angle)
 
         return 'Teeth seperated successfully'
 
