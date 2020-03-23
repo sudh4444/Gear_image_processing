@@ -51,7 +51,7 @@ def process_image(block_img,num):
     block_img_bk = block_img.copy()
     blank_img = np.zeros_like(block_img_bk)
 
-    pos_y, pos_x = np.where(block_img_bk>=180)
+    pos_y, pos_x = np.where(block_img_bk>=200)
     # coordinates = list(zip(pos_y,pos_x))
     # new_ = np.asarray([(y,x) for (y,x) in coordinates if np.count_nonzero(pos_x==x) > 40 and np.count_nonzero(pos_y==y) > 15])
     # for y,x in zip(pos_y,pos_x):
@@ -61,10 +61,10 @@ def process_image(block_img,num):
     #         blank_img[(y,x)] = block_img_bk[(y,x)]
     # save_image("A7_new_coord",blank_img)
 
-    b1,b2 = linear_reg_sc(pos_y,pos_x)
-    return
-    for x in pos_x:
-        new_pos_y.append(int(b1*x+b2))
+    new_pos_y = linear_reg_sc(pos_y,pos_x)
+    # # return
+    # for x in pos_x:
+    #     new_pos_y.append(int(b1*x+b2))
 
     coordinates = list(zip(new_pos_y,pos_x))
     print(coordinates)
@@ -72,7 +72,7 @@ def process_image(block_img,num):
     block_img = cv2.merge((block_img,block_img,block_img))
 
     for (y,x) in coordinates:
-       block_img[(y,x)] = [0,0,255]
+       block_img[(int(y),x)] = [0,0,255]
 
     save_image("A7_line",block_img)
 

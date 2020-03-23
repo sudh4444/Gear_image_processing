@@ -9,7 +9,11 @@ def save_image(name,image):
 def linear_reg_sc(pos_y,pos_x):
 	y = np.array(pos_y)
 	x = np.array(pos_x).reshape(-1,1)
-	print(x)
+	model = LinearRegression().fit(x,y)
+	print("model_intercept c:",model.intercept_)
+	print("model_coef m:",model.coef_)
+	y_new = model.predict(x)
+	return y_new
 
 def linear_reg(pos_y,pos_x):
 
