@@ -45,27 +45,34 @@ def flank_seperation_method1(color_image):
     """
     showimage("color_img", color_image)
     gray_img = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
-    blur = cv2.medianBlur(gray_img, 5)
+    blur = cv2.medianBlur(gray_img, 13)
     original_image = cv2.equalizeHist(blur)
     gray_image = original_image.copy()
     showimage('gray', gray_image)
-    pos = np.where(gray_image > 210)
+    pos = np.where(gray_image > 160)
     gray_image[pos] = [0]
+
     showimage('gray_image', gray_image)
 
-    gray_image, _ = crop.crop_radial_arc_two_centres(gray_image, centre_x1=400, centre_y1=-300,
+    crop1, _ = crop.crop_radial_arc_two_centres(gray_image, centre_x1=400, centre_y1=-300,
                                                      centre_x2=400, centre_y2=-170, radius1=450, radius2=510,
                                                      theta1=230,
                                                      theta2=310)
-    showimage('gray_image', gray_image)
+    showimage('crop1', crop1)
 
-    contours, hierarchy = cv2.findContours(gray_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
+    contours, hierarchy = cv2.findContours(crop1, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2:]
     n = 0
     if contours:
         for c in contours:
             area = cv2.contourArea(c)
             if area <5000 or area > 200000:
                 continue
+
+            x, y, w, h = cv2.boundingRect(c)
+            gray_three = cv2.merge([crop1, crop1, crop1])
+            img = cv2.rectangle(gray_three, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            showimage("rectangle", img)
+
             n += 1
             rect = cv2.minAreaRect(c)
 
@@ -102,12 +109,12 @@ def flank_seperation_method2(original_img):
     new_img = original_img.copy()
 
     showimage("color_img", original_img)
-    gray_img = cv2.cvtColor(original_img, cv2.COLOR_BGR2GRAY)
-    blur = cv2.medianBlur(gray_img, 5)
+    gray_img = cv2.cvtColor(new_img, cv2.COLOR_BGR2GRAY)
+    blur = cv2.medianBlur(gray_img, 9)
     original_image = cv2.equalizeHist(blur)
     gray_image = original_image.copy()
     showimage('gray', gray_image)
-    pos = np.where(gray_image > 210)
+    pos = np.where(gray_image > 160)
     gray_image[pos] = [0]
     showimage('gray_image', gray_image)
 
@@ -130,6 +137,43 @@ def flank_seperation_method2(original_img):
         cv2.waitKey(0)
 
 
+
+
+def flank_dent_detection(img, num):
+    accum = np.zeros_like(img)
+    test_image = np.zeros_like(img)
+    ksize = 9
+    for theta in np.arange(0, np.pi, np.pi / 4):
+        kernel = cv2.getGaborKernel((ksize, ksize), 10, theta, 18, 0.25, 0, ktype=cv2.CV_32F)
+        kernel /= 1.5 * kernel.sum()
+        fimg = cv2.filter2D(img, cv2.CV_8UC3, kernel)
+        np.maximum(accum, fimg, accum)
+    #
+    showimage('A2_accum', accum)
+    _, thresh = cv2.threshold(accum, 161, 255, cv2.THRESH_BINARY)
+    showimage("A3_thresh" + str(num), thresh)
+
+    sobel = convolve_sobel(img=accum,
+                           threshold=10,
+                           sobel_kernel_left_right=True,
+                           sobel_kernel_right_left=True,
+                           sobel_kernel_top_bottom=True,
+                           sobel_kernel_bottom_top=True,
+                           sobel_kernel_diagonal_top_left=True,
+                           sobel_kernel_diagonal_bottom_left=False,
+                           sobel_kernel_diagonal_top_right=True,
+                           sobel_kernel_diagonal_bottom_right=False)
+    sobel = cv2.convertScaleAbs(sobel)
+    showimage("A2_sobel" + str(num), sobel)
+
+    pos = np.where(accum < 162)
+    test_image[pos] = 255
+
+    showimage("A5_test_image" + str(num), test_image)
+
+    return test_image
+
+
 if __name__ == "__main__":
     path = "/media/pooja/G-drive/My-repository/Allygrow/18-3-20/RPI-B/cam1_original/"
     # path = "/media/pooja/G-drive/My-repository/Allygrow/6FM/"
@@ -146,7 +190,7 @@ if __name__ == "__main__":
             original_image = cv2.imread(path+img)
             showimage("A0_original", original_image)
             flank_seperation_method1(original_image)
-            #
+
             # flank_seperation_method2(original_image)
 
             end_time = time.time()
