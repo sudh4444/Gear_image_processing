@@ -5,7 +5,8 @@ import os
 
 from envision import crop
 
-
+# Saylee Kanitkar
+# Dont use this code
 def teeth_seperation(color_image):
     """
     teeth seperation
@@ -120,7 +121,9 @@ def sub_image(image, center, theta, width, height):
 
 
 def main():
-    path = "/media/saylee/Work/Image_Processing_Study/17-3-20__6FM_radius_cam1/17-3-20  6FM_radius_cam1/"
+    # path = "/media/saylee/Work/Image_Processing_Study/17-3-20__6FM_radius_cam1/17-3-20  6FM_radius_cam1/"
+    path = "/media/saylee/Work/Allygrow/Gear_image_processing/IMAGES/OK_PART_RPI-B/ok_cam1/"
+    # path = "/media/saylee/Work/Allygrow/Gear_image_processing/IMAGES/OK_PART_RPI-B/ok_cam2/"
     for f in os.listdir(path):
         # image_name = f.strip(".jpg")
         image = cv2.imread(path + f)
