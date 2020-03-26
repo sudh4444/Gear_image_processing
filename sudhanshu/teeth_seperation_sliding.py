@@ -25,22 +25,22 @@ def teeth_seperation(image):
     
     green_channel = color_img[:,:,1]
     save_image("A2_green_a",green_channel)
-    
+    image_bk = green_channel.copy()
     green_channel = cv2.medianBlur(green_channel,21)
     save_image("A2_green_blur",green_channel)
     
-    img1, _ = crop.crop_radial_arc_two_centres(green_channel, centre_x1=400, centre_y1=-240,
-                                                 centre_x2=400, centre_y2=-300, radius1=500, radius2=650,
+    img1, _ = crop.crop_radial_arc_two_centres(green_channel, centre_x1=400, centre_y1=-270,
+                                                 centre_x2=400, centre_y2=-280, radius1=500, radius2=650,
                                                  theta1=230,
                                                  theta2=310)
     img1_bk = img1.copy()
     save_image("A3_crop",img1)  
                                                 
-    img1[np.where(img1 < 200)] = [0]
-    save_image("A4_binary",img1)
+    image_bk[np.where(img1 < 200)] = [0]
+    save_image("A4_binary",image_bk)
 
     time2 = time.time()
-    find_teeth_freq(img1_bk)
+    # find_teeth_freq(img1_bk)
     #find_teeth(img1,img1_bk)
     print("time taken for freq:",abs(time.time()-time2))
     return
@@ -151,6 +151,8 @@ def find_teeth_freq(img1):
 if __name__ == "__main__":
     
     path = "C:/Users/sudha/Desktop/trendzlink/Gear_image_processing/IMAGES/OK_PART_RPI-B/ok_cam1/"
+    path = "C:/Users/sudha/Desktop/trendzlink/Gear_image_processing/sudhanshu/"
+    
     image_list = []
     files_list = os.listdir(str(path))
     original_image = np.zeros((600,800,3),dtype = 'uint8')
